@@ -149,8 +149,8 @@ def matrix_vector_multiply(matrix, vector):
     if shape(matrix[0]) != shape(vector):
         raise ShapeException
     else:
-        return [matrix[i]*vector[i]+matrix[i]*vector[i] for i,value in enumerate(vector)]
-
+        multiples = [[m_value*vector[i] for i,m_value in enumerate(row)] for row in matrix]
+        return [sum(line) for line in multiples]
 #@raises(ShapeException)
 def matrix_vector_multiply_checks_shapes(matrix, vector):
     """Shape Rule: The number of rows of the vector must equal the number of
