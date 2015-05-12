@@ -51,7 +51,13 @@ def vector_sub_checks_shapes(x,y):
 
 def vector_sum(*args):
     """vector_sum can take any number of vectors and add them together."""
-    pass
+    if shape(x) != shape(y):
+        raise ShapeException
+    else:
+        if len(args):
+            return args[0]
+        else:
+            return sum(args[0], vector_sum(args[1:]))
 
 #@raises(ShapeException)
 def vector_sum_checks_shapes(*vectors):
@@ -169,7 +175,7 @@ def matrix_matrix_multiply(matrix1, matrix2):
     if shape(matrix1) != shape(matrix2):
         raise ShapeException
     else:
-        return matrix1
+        return [[dot(matrix1[i],matrix_col(matrix2,j)) for i in range(len(matrix1[0]))] for j in range(len(matrix2[0]))]
 
 
 #@raises(ShapeException)
