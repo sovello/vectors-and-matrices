@@ -3,17 +3,20 @@ import math
 class ShapeException(Exception):
     pass
 
+
 def shape(some_matrix):
-    if type(some_matrix[0] is not list):
-        return (len(some_matrix),)
-    else:
+    if isinstance(some_matrix[0], list):
         return len(some_matrix),len(some_matrix[0])
+    else:
+        return (len(some_matrix),)
+
 
 def shape_vectors(some_vector):
     """shape should take a vector or matrix and return a tuple with the
     number of rows (for a vector) or the number of rows and columns
     (for a matrix.)"""
     return shape(some_vector)
+
 
 def vector_add(x,y):
     """
@@ -26,12 +29,14 @@ def vector_add(x,y):
     else:
         return [ x[i]+y[i] for i in range(len(x))]
 
+
 def vector_add_is_communicative(x,y):
     return vector_add(x,y) == vector_add(y,x)
 
-#@raises(ShapeException)
+
 def vector_add_checks_shapes(x,y):
     vector_add(x,y)
+
 
 def vector_sub(x,y):
     """
@@ -44,28 +49,24 @@ def vector_sub(x,y):
     else:
         return [x[i]-y[i] for i in range(len(x))]
 
-#@raises(ShapeException)
+
 def vector_sub_checks_shapes(x,y):
     """Shape rule: the vectors must be the same size."""
     vector_sub(x,y)
 
+
 def vector_sum(*args):
     """vector_sum can take any number of vectors and add them together."""
-    if shape(x) != shape(y):
-        raise ShapeException
-    else:
-        if len(args):
-            return args[0]
-        else:
-            return sum(args[0], vector_sum(args[1:]))
+    vec_sum = args[0]
+    for arg in args[1:]:
+        vec_sum = vector_add(vec_sum, arg)
+    return vec_sum
 
-#@raises(ShapeException)
+
 def vector_sum_checks_shapes(*vectors):
     """Shape rule: the vectors must be the same size."""
-    if shape(x) != shape(y):
-        raise ShapeException
-    else:
-        return [x[i]-y[i] for i in range(len(x))]
+    return vector_sum(*args)
+
 
 def dot(u,v):
     """
@@ -78,7 +79,7 @@ def dot(u,v):
     else:
         return sum([ u[i]*v[j] for i, value in enumerate(v) for j,value2 in enumerate(u) if i==j])
 
-#@raises(ShapeException)
+
 def dot_checks_shapes(x,y):
     """Shape rule: the vectors must be the same size."""
     dot(x,y)
@@ -91,13 +92,13 @@ def vector_multiply(x,constant):
     """
     return [value*constant for value in x]
 
-def vector_mean(x,y):
+def vector_mean(*vectors):
     """
     mean([a b], [c d]) = [mean(a, c) mean(b, d)]
 
     mean(Vector)       = Vector
     """
-    return [ m/2 for m in vector_add(x,y)]
+    return [ element/len(vectors) for i,element in enumerate(vector_sum(*vectors))]
 
 def magnitude(vector):
     """
@@ -157,7 +158,7 @@ def matrix_vector_multiply(matrix, vector):
     else:
         multiples = [[m_value*vector[i] for i,m_value in enumerate(row)] for row in matrix]
         return [sum(line) for line in multiples]
-#@raises(ShapeException)
+
 def matrix_vector_multiply_checks_shapes(matrix, vector):
     """Shape Rule: The number of rows of the vector must equal the number of
     columns of the matrix."""
@@ -172,14 +173,19 @@ def matrix_matrix_multiply(matrix1, matrix2):
 
     Matrix * Matrix = Matrix
     """
-    if shape(matrix1) != shape(matrix2):
+    if shape(matrix1)[1] != shape(matrix2)[0]:
         raise ShapeException
     else:
-        return [[dot(matrix1[i],matrix_col(matrix2,j)) for i in range(len(matrix1[0]))] for j in range(len(matrix2[0]))]
+        rotation = [[value[i] for value in matrix2] for i in range(len(matrix2[0]))]
+
+        return [[dot(matrix1[i], rotation[j]) for j in range(len(rotation))] for i in range(len(matrix1))]
 
 
-#@raises(ShapeException)
 def matrix_matrix_multiply_checks_shapes(matrix1, matrix2):
     """Shape Rule: The number of columns of the first matrix must equal the
     number of rows of the second matrix."""
     matrix_matrix_multiply(matrix1, matrix2)
+
+
+if __name__ == '__main__':
+    print("Voila")
